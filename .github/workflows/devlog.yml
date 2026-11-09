@@ -1,0 +1,16 @@
+name: devlog
+on:
+  schedule: [{ cron: "17 21 * * *" }]   # daily, early morning Hobart
+  workflow_dispatch:
+permissions: { contents: write }
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/devlog.py
+      - run: |
+          git diff --quiet && exit 0
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "devlog: latest articles" && git push
